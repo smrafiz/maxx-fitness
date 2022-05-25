@@ -139,17 +139,17 @@ class Mfit_Setup {
 		$this->lang_dir = get_theme_file_path( 'languages' );
 
 		// Theme Post Formats.
-		$this->post_formats = array(
-			'gallery',
-			'audio',
-			'video',
-			'quote',
-			'link',
-		);
+		// $this->post_formats = array(
+		// 	'gallery',
+		// 	'audio',
+		// 	'video',
+		// 	'quote',
+		// 	'link',
+		// );
 
 		// Theme Custom Image Sizes.
 		$this->image_size = array(
-			'mfit-featured-image, 600, 375, true',
+			'mfit-featured-image, 800, 533, true',
 			'mfit-square-image, 400, 400, true',
 		);
 

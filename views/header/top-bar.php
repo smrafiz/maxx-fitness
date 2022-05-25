@@ -19,7 +19,7 @@ $tb_page       = get_theme_mod( 'mfit_header_page_selector' );
 
 <div class="top-bar-wrapper">
 	<div class="row align-items-center">
-		<div class="col col-sm-4 col-md-4 col-lg-4 col-xl-4">
+		<div class="col col-sm-4 col-md-4 col-lg-4 col-xl-4 d-none d-sm-block">
 			<div class="header-socials">
 				<?php
 				if ( get_theme_mod( 'mfit_header_socials', 1 ) ) {
@@ -28,17 +28,18 @@ $tb_page       = get_theme_mod( 'mfit_header_page_selector' );
 				?>
 			</div>
 		</div>
-		<div class="col col-sm-8 col-md-4 col-lg-4 col-xl-4">
-			<div class="top-bar-middle text-center">
+		<div class="col-9 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+			<div class="top-bar-middle text-left text-sm-center">
 				<div class="page-selector">
 					<a class="color-text mfit-text" href="<?php echo esc_url( get_permalink( $tb_page ) ); ?>"><?php echo wp_kses_post( $tb_page_title ); ?></a>
 				</div>
 			</div>
 		</div>
-		<div class="col col-sm-8 col-md-4 col-lg-4 col-xl-4">
-			<div class="top-bar-right d-flex mb-0 align-items-center justify-content-md-end">
+		<div class="col-3 col-sm-2 col-md-4 col-lg-4 col-xl-4">
+			<div class="top-bar-right d-flex mb-0 align-items-center justify-content-end justify-content-md-end">
 				<a class="d-flex header-phone mfit-text" href="tel:<?php echo esc_attr( $tb_phone_url ); ?>">
-					<span class="d-none d-md-inline"><?php echo esc_html( $tb_phone ); ?></span>
+					<span class="d-none d-lg-inline"><?php echo esc_html( $tb_phone ); ?></span>
+					<i class="fas fa-phone-alt d-block d-lg-none"></i>
 				</a>
 			</div>
 		</div>

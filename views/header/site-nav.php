@@ -26,12 +26,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 	</nav><!-- #main-nav -->
 </div><!-- .navigation-wrapper -->
-
-<div id="mfit-menu-trigger" class="mobile-nav mfit-menu-trigger d-block d-sm-block d-md-block d-lg-none text-right">
-	<div class="primary-nav">
-		<button id="mfit-trigger-button" class="primary-nav-details">
-			<span><?php echo esc_html__( 'Menu', 'maxx-fitness' ); ?></span>
-			<i class="fa fa-bars"></i>
-		</button>
-	</div><!-- #primary-nav -->
-</div><!-- #mfit-menu-trigger -->

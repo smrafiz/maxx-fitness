@@ -28,11 +28,11 @@ if ( ! wc_review_ratings_enabled() ) {
 // echo wc_get_rating_html( $product->get_average_rating() ); // WordPress.XSS.EscapeOutput.OutputNotEscaped.
 
 $rating = $product->get_average_rating();
-$count  = $product->review_count ? $product->review_count : 0;
+$reviews = $product->get_review_count();
+$count   = $reviews ? $reviews : 0;
 
 $rating_html = '<div class="star-rating-wrapper"><div class="star-rating"><span style="width:' . esc_attr( ( $rating / 5 ) * 100 ) . '%"></span></div><div class="review-count">(' . $count . ')</div></div>';
 
 echo $rating_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
-// Now we display the product short description. This is optional.
 wc_get_template( 'single-product/short-description.php' );

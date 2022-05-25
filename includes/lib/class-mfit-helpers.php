@@ -128,6 +128,10 @@ class Mfit_Helpers {
 	 * since 1.0.0
 	 */
 	public static function inside_top_product_cat() {
+		if ( is_shop() || is_product() || is_search() || is_404() ) {
+			return;
+		}
+
 		if ( function_exists( 'is_product_category' ) ) {
 			$terms = get_queried_object();
 
@@ -149,7 +153,11 @@ class Mfit_Helpers {
 	 * since 1.0.0
 	 */
 	public static function inside_product_attribute() {
-		if ( is_tax() && function_exists( 'taxonomy_is_product_attribute') ) {
+		if ( is_shop() || is_product() || is_search() ) {
+			return;
+		}
+
+		if ( is_tax() && function_exists( 'taxonomy_is_product_attribute' ) ) {
 			$tax_obj = get_queried_object();
 			return taxonomy_is_product_attribute( $tax_obj->taxonomy );
 		}
@@ -263,7 +271,10 @@ class Mfit_Helpers {
 	 */
 	public static function print_cart_icon( $icon = true, $text = true ) {
 		global $product;
-		$quantity = 1;
+
+		$qty = get_post_meta( $product->get_id(), '_wc_min_qty_product', true );
+
+		$quantity = ! empty( $qty ) ? $qty : 1;
 		$class    = implode(
 			' ',
 			array_filter(
@@ -334,5 +345,23 @@ class Mfit_Helpers {
 		global $wp;
 		$current_url = add_query_arg( $wp->query_string, '&view=list', home_url( $wp->request ) );
 		return $current_url;
+	}
+
+	/**
+	 * Get all attribute terms.
+	 *
+	 * @param string $pa Product attribute name.
+	 * @return array
+	 */
+	public static function get_all_attribute_terms( $pa ) {
+		$terms = get_terms( $pa );
+
+		if ( empty( $terms ) ) {
+			return array();
+		}
+
+		$term_ids = wp_list_pluck( $terms, 'term_id' );
+
+		return $term_ids;
 	}
 }

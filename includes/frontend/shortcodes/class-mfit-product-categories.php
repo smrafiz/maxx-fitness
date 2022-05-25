@@ -72,7 +72,11 @@ class Mfit_Product_Categories {
 		ob_start();
 
 		$page   = get_queried_object();
-		$parent = $page->term_id;
+		$parent = '';
+
+		if ( ! is_shop() ) {
+			$parent = $page->term_id;
+		}
 
 		if ( Mfit_Helpers::inside_top_product_cat() && ! Mfit_Helpers::inside_product_attribute() ) {
 
@@ -82,7 +86,9 @@ class Mfit_Product_Categories {
 
 			$page_terms = get_terms( 'product_cat', $args );
 
-			$this->render_accordion( $parent, $page_terms );
+			if ( 'zubehor' !== $page->slug ) {
+				$this->render_accordion( $parent, $page_terms );
+			}
 		} elseif ( Mfit_Helpers::inside_product_cat() ) {
 			$parent = $page->parent;
 			$args   = array(
@@ -103,6 +109,10 @@ class Mfit_Product_Categories {
 		$other_terms = get_terms( 'product_cat', $other_cat_args );
 
 		foreach ( $other_terms as $other_term ) {
+			if ( ! ( 'ausdauertraining' === $other_term->slug || 'trainingszirkel' === $other_term->slug || 'krafttraining' === $other_term->slug ) ) {
+				continue;
+			}
+
 			$child_args = array(
 				'orderby' => 'name',
 				'order'   => 'ASC',
@@ -138,7 +148,7 @@ class Mfit_Product_Categories {
 			<ul class="accordion-content">
 				<?php
 				foreach ( $children as $child ) {
-					$class = $page->term_id === $child->term_id ? 'current-term' : '';
+					$class = $page && $page->term_id === $child->term_id ? 'current-term' : '';
 
 					echo '<li class="' . esc_attr( $class ) . '">';
 						echo '<a href="' . esc_url( get_term_link( $child ) ) . '" class="mfit-text primary ' . esc_attr( $child->slug ) . '">';

@@ -131,6 +131,24 @@ class Mfit_Admin {
 			),
 
 			array(
+				'name'     => esc_html__( 'WooCommerce Filters', 'maxx-fitness' ),
+				'slug'     => 'woocommerce-ajax-filters',
+				'required' => true,
+			),
+
+			array(
+				'name'     => esc_html__( 'WooCommerce Wishlist', 'maxx-fitness' ),
+				'slug'     => 'yith-woocommerce-wishlist',
+				'required' => true,
+			),
+
+			array(
+				'name'     => esc_html__( 'Anywhere Elementor', 'maxx-fitness' ),
+				'slug'     => 'anywhere-elementor',
+				'required' => false,
+			),
+
+			array(
 				'name'     => esc_html__( 'Yoast SEO', 'maxx-fitness' ),
 				'slug'     => 'wordpress-seo',
 				'required' => false,

@@ -117,6 +117,12 @@ if ( ! function_exists( 'mfit_the_page_title' ) ) {
 
 		if ( is_home() ) {
 			$title = get_theme_mod( 'mfit_pagetitle_blog', __( 'Blog', 'maxx-fitness' ) );
+		} elseif ( isset( $_GET['show_term'] ) && 'smartcircle' === $_GET['show_term'] ) {
+			$title = __( 'smartCircle', 'maxx-fitness' );
+		} elseif ( isset( $_GET['show_term'] ) && 'pedalo' === $_GET['show_term'] ) {
+			$title = __( 'Pedalo', 'maxx-fitness' );
+		} elseif ( isset( $_GET['show_term'] ) && 'marken' === $_GET['show_term'] ) {
+			$title = __( 'Marken', 'maxx-fitness' );
 		} elseif ( is_archive() ) {
 			$title = get_the_archive_title();
 		} elseif ( is_search() ) {
@@ -164,8 +170,8 @@ if ( ! function_exists( 'mfit_numbered_pagination' ) ) {
 		// Pagination Class Instance.
 		$pagination = Mfit_Pagination::get_instance();
 
-		$prev = esc_html_x( '&laquo;', 'Older Posts', 'maxx-fitness' );
-		$next = esc_html_x( '&raquo;', 'Newer Posts', 'maxx-fitness' );
+		$prev = esc_html_x( '&larr;', 'Older Posts', 'maxx-fitness' );
+		$next = esc_html_x( '&rarr;', 'Newer Posts', 'maxx-fitness' );
 
 		// Rendering Numbered Pagination.
 		$pagination->numbered_posts_nav( $prev, $next );
@@ -236,9 +242,17 @@ if ( ! function_exists( 'mfit_posted_on' ) ) {
 
 		$posted_on = sprintf(
 			/* translators: %s: post date. */
-			esc_html_x( 'Posted on %s', 'post date', 'maxx-fitness' ),
+			esc_html_x( '%s', 'post date', 'maxx-fitness' ),
 			'<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . $time_string . '</a>'
 		);
+
+		if ( is_single() ) {
+			$posted_on = sprintf(
+				/* translators: %s: post date. */
+				esc_html_x( '%s', 'post date', 'maxx-fitness' ),
+				$time_string
+			);
+		}
 
 		echo '<span class="posted-on">' . $posted_on . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
@@ -349,7 +363,7 @@ if ( ! function_exists( 'mfit_comment_form' ) ) {
 		$url = '<div class="col-12 col-sm-12 col-md-4">' .
 				'<div class="comment-form-url">' .
 				'<fieldset>' .
-				'<input id="url" name="url" ' . ( $html5 ? 'type="url"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_url'] ) . '" placeholder="' . esc_html__( 'Website', 'maxx-fitness' ) . '" size="30" />' .
+				'<input id="url" name="url" ' . ( $html5 ? 'type="url"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_url'] ) . '" placeholder="' . esc_html__( 'Webseite', 'maxx-fitness' ) . '" size="30" />' .
 				'</fieldset>' .
 				'</div>' .
 				'</div>';
@@ -358,7 +372,7 @@ if ( ! function_exists( 'mfit_comment_form' ) ) {
 					'<div class="comment-form-cookies-consent">' .
 					'<fieldset>' .
 					'<input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"' . $consent . ' /> ' .
-					'<label class="form-check-label" for="wp-comment-cookies-consent">' . esc_html__( 'Save my name, email, and website in this browser for the next time I comment', 'maxx-fitness' ) . '</label>' .
+					'<label class="form-check-label" for="wp-comment-cookies-consent">' . esc_html__( 'Meinen Namen, meine E-Mail-Adresse und meine Website in diesem Browser speichern, bis ich das nächste Mal kommentiere', 'maxx-fitness' ) . '</label>' .
 					'</fieldset>' .
 					'</div>' .
 					'</div>' .
@@ -366,7 +380,7 @@ if ( ! function_exists( 'mfit_comment_form' ) ) {
 
 		$comment_field = '<div class="comment-form-comment">' .
 						'<fieldset>' .
-						'<textarea id="comment" placeholder="' . esc_html_x( 'Comment', 'noun', 'maxx-fitness' ) . ( $req ? ' *' : '' ) . '" name="comment" cols="45" rows="8" aria-required="true"></textarea>' .
+						'<textarea id="comment" placeholder="' . esc_html_x( 'Kommentar', 'noun', 'maxx-fitness' ) . ( $req ? ' *' : '' ) . '" name="comment" cols="45" rows="8" aria-required="true"></textarea>' .
 						'</fieldset>' .
 						'</div>';
 
@@ -385,11 +399,11 @@ if ( ! function_exists( 'mfit_comment_form' ) ) {
 				),
 				'comment_notes_before' => '',
 				'comment_notes_after'  => '',
-				'title_reply'          => esc_html__( 'Got Something To Say?', 'maxx-fitness' ),
-				'title_reply_to'       => esc_html__( 'Got Something To Say?', 'maxx-fitness' ),
-				'cancel_reply_link'    => esc_html__( 'Cancel Comment', 'maxx-fitness' ),
+				'title_reply'          => esc_html__( 'Haben Sie etwas zu sagen?', 'maxx-fitness' ),
+				'title_reply_to'       => esc_html__( 'Haben Sie etwas zu sagen?', 'maxx-fitness' ),
+				'cancel_reply_link'    => esc_html__( 'Kommentar abbrechen', 'maxx-fitness' ),
 				'comment_field'        => $comment_field,
-				'label_submit'         => esc_html__( 'Submit Comment', 'maxx-fitness' ),
+				'label_submit'         => esc_html__( 'Senden', 'maxx-fitness' ),
 				'id_submit'            => 'submit_comment',
 				'class_submit'         => 'default-btn',
 			)

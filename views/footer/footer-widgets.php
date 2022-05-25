@@ -41,14 +41,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="row">
-			<div id="footer-top-col-1" class="footer-top-column mb-half col-12 col-sm-12 col-md-6">
+			<div id="footer-top-col-1" class="footer-top-column mb-half col-12 col-sm-12 col-md-12 col-lg-6">
 				<?php
 				if ( is_active_sidebar( 'mfit-footer-top-col-1' ) ) {
 					dynamic_sidebar( 'mfit-footer-top-col-1' );
 				}
 				?>
 			</div>
-			<div id="footer-top-col-2" class="footer-top-column mb-half col-12 col-sm-12 col-md-6">
+			<div id="footer-top-col-2" class="footer-top-column mb-half col-12 col-sm-12 col-md-12 col-lg-6">
 				<?php
 				if ( is_active_sidebar( 'mfit-footer-top-col-2' ) ) {
 					dynamic_sidebar( 'mfit-footer-top-col-2' );
@@ -61,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			$column_count = 4;
 
 			for ( $footer_no = 1; $footer_no <= $column_count; $footer_no++ ) {
-				echo '<div id="footer-bottom-col-' . esc_attr( $footer_no ) . '" class="footer-column mb-half col-12 col-sm-12 col-md-4 col-lg-3">';
+				echo '<div id="footer-bottom-col-' . esc_attr( $footer_no ) . '" class="footer-column mb-half col-12 col-sm-12 col-md-6 col-lg-3">';
 				if ( is_active_sidebar( 'mfit-footer-bottom-col-' . esc_attr( $footer_no ) ) ) {
 					dynamic_sidebar( 'mfit-footer-bottom-col-' . esc_attr( $footer_no ) );
 				}

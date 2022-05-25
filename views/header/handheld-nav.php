@@ -26,4 +26,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		)
 	);
 	?>
+	<div class="mobile-menu-footer">
+		<div class="header-socials">
+			<?php
+			if ( get_theme_mod( 'mfit_header_socials', 1 ) ) {
+				echo do_shortcode( '[mfit_social_icons]' );
+			}
+			?>
+		</div>
+	</div>
 </nav>

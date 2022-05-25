@@ -74,10 +74,11 @@ class Mfit_Shortcodes {
 	 */
 	private function get_shortcodes() {
 		return array(
+			Mfit_Products::class,
 			Mfit_Social_Icons::class,
-			Mfit_Sale_Products::class,
 			Mfit_Footer_Payment::class,
 			Mfit_Product_Categories::class,
+			Mfit_Recently_Viewed_Products::class,
 		);
 	}
 

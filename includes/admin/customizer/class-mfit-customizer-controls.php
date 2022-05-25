@@ -701,7 +701,7 @@ class Mfit_Customizer_Controls {
 			'transport'   => 'auto',
 			'output'      => array(
 				array(
-					'element' => '#wrapper.inner-page-content',
+					'element' => 'body:not(.woocommerce-page.archive) #wrapper.inner-page-content',
 				),
 			),
 		);
@@ -719,6 +719,15 @@ class Mfit_Customizer_Controls {
 	 */
 	private function blog() {
 		$this->controls[] = array(
+			'settings'    => 'mfit_archive_description',
+			'label'       => esc_html__( 'Archive Description', 'maxx-fitness' ),
+			'description' => esc_html__( 'Please enter archive description.', 'maxx-fitness' ),
+			'section'     => 'mfit_archive_settings',
+			'type'        => 'textarea',
+			'priority'    => 10,
+		);
+
+		$this->controls[] = array(
 			'settings'    => 'mfit_archive_pagination',
 			'label'       => esc_html__( 'Pagination Type', 'maxx-fitness' ),
 			'description' => esc_html__( 'Please select the pagination type for archive pages', 'maxx-fitness' ),
@@ -728,19 +737,19 @@ class Mfit_Customizer_Controls {
 			),
 			'type'        => 'select',
 			'section'     => 'mfit_archive_settings',
-			'priority'    => 10,
+			'priority'    => 11,
 			'default'     => 'classic',
 		);
 
-		$this->controls[] = array(
-			'settings'    => 'mfit_single_pagination',
-			'label'       => esc_html__( 'Enable Single Post Navigation?', 'maxx-fitness' ),
-			'description' => esc_html__( 'Enable/disable single post navigation', 'maxx-fitness' ),
-			'type'        => 'toggle',
-			'section'     => 'mfit_single_settings',
-			'priority'    => 10,
-			'default'     => 0,
-		);
+		// $this->controls[] = array(
+		// 	'settings'    => 'mfit_single_pagination',
+		// 	'label'       => esc_html__( 'Enable Single Post Navigation?', 'maxx-fitness' ),
+		// 	'description' => esc_html__( 'Enable/disable single post navigation', 'maxx-fitness' ),
+		// 	'type'        => 'toggle',
+		// 	'section'     => 'mfit_single_settings',
+		// 	'priority'    => 10,
+		// 	'default'     => 0,
+		// );
 
 		return $this;
 	}

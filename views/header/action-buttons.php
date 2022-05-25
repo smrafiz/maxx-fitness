@@ -14,23 +14,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 $images_uri = get_parent_theme_file_uri( 'assets/images/' );
 ?>
 
-<div class="action-buttons">
+<div class="action-buttons d-none d-lg-block">
 	<div class="buttons-wrapper">
 		<ul class="list-inline d-flex align-items-center justify-content-end mb-0">
-			<li class="list-inline-item info-btn">
-				<a class="d-block" href="#">
-					<img width="30" height="30" src="<?php echo esc_url( $images_uri . 'form.svg' ); ?>" alt="<?php esc_html_e( 'Info Button', 'maxx-fitness' ); ?>">
-				</a>
-			</li>
 			<li class="list-inline-item wishlist-btn">
-				<a class="d-block" href="#">
+				<a class="d-block pos-r" href="<?php echo esc_url( YITH_WCWL()->get_wishlist_url() );?>">
 					<img width="30" height="30" src="<?php echo esc_url( $images_uri . 'wishlist.svg' ); ?>" alt="<?php esc_html_e( 'Wishlist Button', 'maxx-fitness' ); ?>">
+					<span class="wishlist-icon-num"><?php echo absint( yith_wcwl_count_all_products() ); ?></span>
 				</a>
 			</li>
-			<li class="list-inline-item login-btn">
-				<a class="d-block" href="#">
+			<li class="list-inline-item login-btn pos-r">
+				<a class="d-block" href="">
 					<img width="30" height="30" src="<?php echo esc_url( $images_uri . 'login.svg' ); ?>" alt="<?php esc_html_e( 'Login Button', 'maxx-fitness' ); ?>">
 				</a>
+				<div class="login-expanded">
+					<ul class="popup-inner <?php echo is_user_logged_in() ? esc_attr( 'logged-in' ) : esc_attr( 'no-login' ); ?>">
+						<?php
+						if ( is_user_logged_in() ) {
+							?>
+							<li class="mfit-account"><a href="/my-account/">Mein Konto</a></li>
+							<li class="mfit-orders"><a href="/my-account/orders/">Meine Bestellungen</a></li>
+							<li class="mfit-recently-viewed"><a href="/my-account/recently-viewed-products/">Kürzlich angesehen</a></li>
+							<li class="mfit-help"><a href="/service-formular/">Hilfe</a></li>
+							<li class="mfit-logout"><a href="<?php echo wp_logout_url( '/' ) ?>">Abmelden</a></li>
+							<?php
+						} else {
+							?>
+							<li class="mfit-login"><a href="/my-account/">Anmeldung</a></li>
+							<li class="mfit-help"><a href="/service-formular/">Hilfe</a></li>
+							<?php
+						}
+						?>
+					</ul>
+				</div>
 			</li>
 			<li class="list-inline-item cart-btn">
 				<a class="d-block pos-r" href="#">
@@ -46,3 +62,12 @@ $images_uri = get_parent_theme_file_uri( 'assets/images/' );
 		</ul>
 	</div><!-- .buttons-wrapper -->
 </div><!-- .action-buttons -->
+
+<div id="mfit-menu-trigger" class="mobile-nav mfit-menu-trigger d-block d-sm-block d-md-block d-lg-none text-right">
+	<div class="primary-nav">
+		<button id="mfit-trigger-button" class="primary-nav-details">
+			<span><?php echo esc_html__( 'Menu', 'maxx-fitness' ); ?></span>
+			<i class="fa fa-bars"></i>
+		</button>
+	</div><!-- #primary-nav -->
+</div><!-- #mfit-menu-trigger -->

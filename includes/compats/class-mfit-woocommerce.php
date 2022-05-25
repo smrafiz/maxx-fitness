@@ -84,7 +84,7 @@ class Mfit_Woocommerce {
 		// Custom mini cart.
 		add_action( 'wp_head', array( $this, 'custom_cart_functionality' ) );
 
-		// Product thumb & title
+		// Product thumb & title.
 		remove_action( 'woocommerce_before_subcategory_title', 'woocommerce_subcategory_thumbnail', 10 );
 		remove_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_loop_category_title', 10 );
 		add_action( 'woocommerce_before_subcategory_title', array( $this, 'image_wrapper' ) );
@@ -103,12 +103,51 @@ class Mfit_Woocommerce {
 		remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );
 		remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
 		remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
+		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
+		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
 
 		// Custom on-sale.
 		add_filter( 'woocommerce_sale_flash', array( $this, 'sale_flash' ), 10, 3 );
 
 		// Custom price text.
 		add_filter( 'woocommerce_get_price_html', array( $this, 'product_price_display' ) );
+
+		// Custom product query.
+		add_action( 'woocommerce_product_query', array( $this, 'product_query' ) );
+
+		// Custom sorting.
+		add_filter( 'woocommerce_catalog_orderby', array( $this, 'sorting_orderby' ) );
+
+		// Default Sorting.
+		add_filter( 'woocommerce_default_catalog_orderby', array( $this, 'default_catalog_orderby' ) );
+
+		// Product Custom Tabs.
+		add_filter( 'woocommerce_product_tabs', array( $this, 'product_tabs' ) );
+
+		// Single product summary.
+		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+		add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 22 );
+		add_action( 'woocommerce_single_product_summary', array( $this, 'product_information' ), 21, 0 );
+		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+		add_action( 'woocommerce_single_product_summary', array( $this, 'payment_logo' ), 41, 0 );
+		add_action( 'woocommerce_after_single_product_summary', array( $this, 'contact_section' ), 8, 0 );
+		add_action( 'woocommerce_after_single_product_summary', array( $this, 'tab_title' ), 9, 0 );
+		remove_action( 'woocommerce_single_product_summary', 'woocommerce_gzd_template_single_legal_info', 12 );
+		add_action( 'woocommerce_single_product_summary', 'woocommerce_gzd_template_single_legal_info', 29 );
+		remove_action( 'template_redirect', 'wc_track_product_view', 20 );
+		add_action( 'template_redirect', array( $this, 'track_product_view' ), 20 );
+		add_action( 'woocommerce_product_options_inventory_product_data', array( $this, 'add_min_quantity' ) );
+		add_action( 'woocommerce_process_product_meta', array( $this, 'save_min_quantity_field' ) );
+		add_filter( 'woocommerce_quantity_input_args', array( $this, 'wc_qty_input_args' ), 10, 2 );
+		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'add_to_cart_validation' ), 1, 5 );
+
+		// Cart Page.
+		remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
+		add_action( 'woocommerce_after_cart_form', 'woocommerce_cross_sell_display' );
+
+		// My Account Page.
+		add_filter( 'woocommerce_account_menu_items', array( $this, 'my_account_links' ) );
+		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'my_account_custom_links' ), 10, 4 );
 
 		/* Yith Wishlist */
 		if ( function_exists( 'YITH_WCWL_Frontend' ) && class_exists( 'YITH_WCWL_Ajax_Handler' ) ) {
@@ -302,7 +341,7 @@ class Mfit_Woocommerce {
 			return;
 		}
 
-		$small_thumbnail_size = apply_filters( 'subcategory_archive_thumbnail_size', 'woocommerce_thumbnail' );
+		$small_thumbnail_size = 'full';
 		$dimensions           = wc_get_image_size( $small_thumbnail_size );
 		$thumbnail_id         = get_term_meta( $category->term_id, 'thumbnail_id', true );
 
@@ -353,8 +392,16 @@ class Mfit_Woocommerce {
 		<div class="mfit-category-title">
 			<h2 class="woocommerce-loop-category__title h5">
 				<?php
-				$parent         = get_term_by( 'id', $category->parent, 'product_cat' );
-				$category->name = esc_html( $parent->name ) . ' für <br>' . esc_html( $category->name );
+				$parent = get_term_by( 'id', $category->parent, 'product_cat' );
+
+				if ( 'krafttraining' === $parent->slug ) {
+					$category->name = esc_html( $parent->name ) . ' für <br>' . esc_html( $category->name );
+				}
+
+				if ( 'trainingszirkel' === $parent->slug ) {
+					$category->name = esc_html( $parent->name ) . ' <br>' . esc_html( $category->name );
+				}
+
 				echo $category->name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 			</h2>
@@ -459,7 +506,7 @@ class Mfit_Woocommerce {
 	 */
 	public function add_to_wishlist() {
 		check_ajax_referer( 'add_to_wishlist', 'nonce' );
-		\YITH_WCWL_Ajax_Handler::add_to_wishlist();
+		YITH_WCWL()->add();
 		wp_die();
 	}
 
@@ -470,7 +517,479 @@ class Mfit_Woocommerce {
 	 */
 	public function remove_from_wishlist() {
 		check_ajax_referer( 'add_to_wishlist', 'nonce' );
-		\YITH_WCWL_Ajax_Handler::remove_from_wishlist();
+		YITH_WCWL()->remove();
 		wp_die();
+	}
+
+	/**
+	 * Custom product query
+	 *
+	 * @param object $q Query object.
+	 * @return void
+	 */
+	public function product_query( $q ) {
+		if ( ! ( isset( $_GET['orderby'] ) || isset( $_GET['show_term'] ) ) ) {
+			return;
+		}
+
+		if ( isset( $_GET['orderby'] ) && 'onsale' === $_GET['orderby'] ) {
+			$sale_ids = wc_get_product_ids_on_sale();
+
+			if ( is_array( $sale_ids ) && ! empty( $sale_ids ) ) {
+				foreach ( $sale_ids as $sale_id ) {
+					$regular_price = get_post_meta( $sale_id, '_regular_price', true );
+					$sale_price    = get_post_meta( $sale_id, '_sale_price', true );
+
+					$sale_percent = 0;
+
+					if ( intval( $regular_price ) > 0 ) {
+						$sale_percent = round( ( ( $regular_price - $sale_price ) / $regular_price ) * 100 );
+					}
+
+					$sale[ $sale_id ] = absint( $sale_percent );
+				}
+
+				arsort( $sale );
+
+				$post_in = array_keys( $sale );
+
+				$q->set( 'post__in', $post_in );
+				$q->set( 'orderby', 'post__in' );
+			}
+		}
+
+		if ( isset( $_GET['orderby'] ) && 'bestseller' === $_GET['orderby'] ) {
+			$q->set( 'meta_key', 'total_sales' );
+			$q->set(
+				'orderby',
+				array(
+					'meta_value_num' => 'DESC',
+					'title'          => 'ASC',
+				)
+			);
+		}
+
+		if ( isset( $_GET['show_term'] ) && 'marken' === $_GET['show_term'] ) {
+			$term_ids = Mfit_Helpers::get_all_attribute_terms( 'pa_marken' );
+
+			$q->set(
+				'tax_query',
+				array(
+					array(
+						'taxonomy' => 'pa_marken',
+						'field'    => 'term_id',
+						'terms'    => $term_ids,
+						'operator' => 'IN',
+					),
+				)
+			);
+		}
+
+		if ( isset( $_GET['show_term'] ) && 'pedalo' === $_GET['show_term'] ) {
+			$term_ids = Mfit_Helpers::get_all_attribute_terms( 'pa_pedalo' );
+
+			$q->set(
+				'tax_query',
+				array(
+					array(
+						'taxonomy' => 'pa_pedalo',
+						'field'    => 'term_id',
+						'terms'    => $term_ids,
+						'operator' => 'IN',
+					),
+				)
+			);
+		}
+
+		if ( isset( $_GET['show_term'] ) && 'smartcircle' === $_GET['show_term'] ) {
+			$term_ids = Mfit_Helpers::get_all_attribute_terms( 'pa_smartcircle' );
+
+			$q->set(
+				'tax_query',
+				array(
+					array(
+						'taxonomy' => 'pa_smartcircle',
+						'field'    => 'term_id',
+						'terms'    => $term_ids,
+						'operator' => 'IN',
+					),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Custom Sorting.
+	 *
+	 * @return array
+	 */
+	public function sorting_orderby() {
+		return array(
+			'price'      => __( 'Preis aufsteigend', 'maxx-fitness' ),
+			'price-desc' => __( 'Preis absteigend', 'maxx-fitness' ),
+			'onsale'     => __( 'Sale', 'maxx-fitness' ),
+			'rating'     => __( 'Empfehlung', 'maxx-fitness' ),
+			'bestseller' => __( 'Bestseller', 'maxx-fitness' ),
+		);
+	}
+
+	/**
+	 * Default Sorting.
+	 *
+	 * @param string $sort_by Sort order.
+	 * @return string
+	 */
+	public function default_catalog_orderby( $sort_by ) {
+		return 'price';
+	}
+
+	/**
+	 * Product Custom Tabs
+	 *
+	 * @param array $tabs Product tabs.
+	 * @return array
+	 */
+	public function product_tabs( $tabs ) {
+		unset( $tabs['additional_information'] );
+
+		if ( get_field( 'mfit_enable_specifications' ) ) {
+			$tabs['technical_data'] = array(
+				'title'    => __( 'Technische Daten', 'maxx-fitness' ),
+				'priority' => 20,
+				'callback' => array( $this, 'technical_data_tab_content' ),
+			);
+		}
+
+		if ( get_field( 'mfit_enable_accessories' ) ) {
+			$tabs['accessories'] = array(
+				'title'    => __( 'Zubehör', 'maxx-fitness' ),
+				'priority' => 21,
+				'callback' => array( $this, 'accessories_tab_content' ),
+			);
+		}
+
+		if ( get_field( 'mfit_enable_video' ) ) {
+			$tabs['video'] = array(
+				'title'    => __( 'Videos', 'maxx-fitness' ),
+				'priority' => 22,
+				'callback' => array( $this, 'video_tab_content' ),
+			);
+		}
+
+		return $tabs;
+	}
+
+	/**
+	 * Technical Data Tab Content.
+	 *
+	 * @return void
+	 */
+	public function technical_data_tab_content() {
+		wc_get_template( 'single-product/tabs/technical-data.php' );
+	}
+
+	/**
+	 * Accessories Tab Content.
+	 *
+	 * @return void
+	 */
+	public function accessories_tab_content() {
+		wc_get_template( 'single-product/tabs/accessories.php' );
+	}
+
+	/**
+	 * Video Tab Content.
+	 *
+	 * @return void
+	 */
+	public function video_tab_content() {
+		wc_get_template( 'single-product/tabs/videos.php' );
+	}
+
+	/**
+	 * Product information.
+	 *
+	 * @return void
+	 */
+	public function product_information() {
+		$type = get_field( 'mfit_product_typnr' );
+		$item = get_field( 'mfit_product_artikelnummer' );
+		$ean  = get_field( 'mfit_product_ean_gtin' );
+
+		if ( empty( $type ) && empty( $item ) && empty( $ean ) ) {
+			return;
+		}
+
+		echo '<div class="product-info">';
+		echo '<div class="product-info-inner">';
+
+		if ( ! empty( $type ) ) {
+			echo '<div class="info-item-wrapper">';
+			echo '<div class="info-item-title">Typnr:</div>';
+			echo '<div class="info-item">' . $type . '</div>';
+			echo '</div>';
+		}
+
+		if ( ! empty( $item ) ) {
+			echo '<div class="info-item-wrapper">';
+			echo '<div class="info-item-title">Artikelnummer:</div>';
+			echo '<div class="info-item">' . $item . '</div>';
+			echo '</div>';
+		}
+
+		if ( ! empty( $ean ) ) {
+			echo '<div class="info-item-wrapper">';
+			echo '<div class="info-item-title">EAN / GTIN Number:</div>';
+			echo '<div class="info-item">' . $ean . '</div>';
+			echo '</div>';
+		}
+
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="product-wishlist">';
+		echo do_shortcode( '[yith_wcwl_add_to_wishlist]' );
+		echo '</div>';
+	}
+
+	/**
+	 * Payment Logo.
+	 *
+	 * @return void
+	 */
+	public function payment_logo() {
+		$logos = array(
+			'paypal.svg',
+			'paypal-r.svg',
+			'mastercard.svg',
+			'sepa.png',
+			'amex.png',
+			'visa.svg',
+		);
+		?>
+		<div class="payment-logo-wrap">
+			<ul class="mb-0 list-inline">
+				<?php
+				foreach ( $logos as $logo ) {
+					echo '<li class="list-inline-item"><img width="200" height="50" src="' . esc_url( get_template_directory_uri() . '/assets/images/' . $logo ) . '" alt="Footer Payment Logo"></li>';
+				}
+				?>
+			</ul>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Contact Section
+	 *
+	 * @return void
+	 */
+	public function contact_section() {
+		$title       = get_field( 'mfit_cta_title' );
+		$button_text = get_field( 'mfit_cta_button_text' );
+		$button_link = get_field( 'mfit_cta_button_link' );
+
+		if ( empty( $title ) && empty( $button_text ) && empty( $button_link ) ) {
+			return;
+		}
+		?>
+		<div class="single-contact-section text-center mb-full bgc-offset pos-r">
+			<h2 class="h3"><?php echo $title; ?></h2>
+			<div class="contact-button">
+				<a href="<?php echo $button_link; ?>" class="mfit-btn primary"><?php echo $button_text; ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Tab Title
+	 *
+	 * @return void
+	 */
+	public function tab_title() {
+		global $product;
+
+		echo '<div class="tab-title">';
+		echo '<div class="section-title"><h2>Produktinformationen ' . $product->get_name() . '</h2></div>';
+		echo '</div>';
+	}
+
+	/**
+	 * My Account Links.
+	 *
+	 * @return array
+	 */
+	public function my_account_links() {
+		return array(
+			// 'dashboard'                => esc_html__( 'Dashboard', 'maxx-fitness' ),
+			'edit-account'     => esc_html__( 'Anmelden & Sicherheit', 'maxx-fitness' ),
+			'orders'           => esc_html__( 'Meine Bestellungen', 'maxx-fitness' ),
+			'edit-address'     => esc_html__( 'Adressen', 'maxx-fitness' ),
+			'recently-viewed'  => esc_html__( 'Kürzlich angesehen', 'maxx-fitness' ),
+			'kontakt-formular' => esc_html__( 'Hilfe', 'maxx-fitness' ),
+			'customer-logout'  => esc_html__( 'Abmelden', 'maxx-fitness' ),
+		);
+	}
+
+	/**
+	 * My Account Custom Links
+	 *
+	 * @param string $url Tab URL.
+	 * @param string $endpoint WooCommerce endpoint.
+	 * @param string $value Value.
+	 * @param string $permalink Permalink.
+	 * @return string
+	 */
+	public function my_account_custom_links( $url, $endpoint, $value, $permalink ) {
+		if ( 'kontakt-formular' === $endpoint ) {
+			$url = site_url() . '/service-formular';
+		}
+
+		if ( 'recently-viewed' === $endpoint ) {
+			$url = site_url() . '/recently-viewed-products';
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Track product view.
+	 *
+	 * @return void
+	 */
+	public function track_product_view() {
+		if ( ! is_singular( 'product' ) ) {
+			return;
+		}
+
+		global $post;
+
+		if ( empty( $_COOKIE['woocommerce_recently_viewed'] ) ) {
+			$viewed_products = array();
+		} else {
+			$viewed_products = wp_parse_id_list( (array) explode( '|', wp_unslash( $_COOKIE['woocommerce_recently_viewed'] ) ) );
+		}
+
+		// Unset if already in viewed products list.
+		$keys = array_flip( $viewed_products );
+
+		if ( isset( $keys[ $post->ID ] ) ) {
+			unset( $viewed_products[ $keys[ $post->ID ] ] );
+		}
+
+		$viewed_products[] = $post->ID;
+
+		if ( count( $viewed_products ) > 15 ) {
+			array_shift( $viewed_products );
+		}
+
+		// Store for session only.
+		wc_setcookie( 'woocommerce_recently_viewed', implode( '|', $viewed_products ) );
+	}
+
+	/**
+	 * Adds a new field in products page.
+	 *
+	 * @return void
+	 */
+	public function add_min_quantity() {
+		echo '<div class="options_group">';
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_wc_min_qty_product',
+				'label'       => __( 'Minimum Quantity', 'maxx-fitness' ),
+				'placeholder' => '',
+				'desc_tip'    => 'true',
+				'description' => __( 'Optional. Set a minimum quantity limit allowed per order. Enter a number, 1 or greater.', 'maxx-fitness' ),
+			)
+		);
+		echo '</div>';
+	}
+
+	/**
+	 * Saves Minimum Quantity Option.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	public function save_min_quantity_field( $post_id ) {
+		$val_min = trim( get_post_meta( $post_id, '_wc_min_qty_product', true ) );
+		$new_min = sanitize_text_field( $_POST['_wc_min_qty_product'] );
+
+		if ( $val_min != $new_min ) {
+			update_post_meta( $post_id, '_wc_min_qty_product', $new_min );
+		}
+	}
+
+	/*
+	* Setting minimum and maximum for quantity input args.
+	*/
+	/**
+	 * Setting minimum for quantity input args.
+	 *
+	 * @param array  $args Product args.
+	 * @param object $product Product object.
+	 * @return array
+	 */
+	public function wc_qty_input_args( $args, $product ) {
+
+		$product_id = $product->get_parent_id() ? $product->get_parent_id() : $product->get_id();
+
+		$product_min = $this->get_product_min_limit( $product_id );
+
+		if ( ! empty( $product_min ) ) {
+			if ( false !== $product_min ) {
+				$args['min_value'] = $product_min;
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Validating the quantity on add to cart action with the quantity of the
+	 * same product available in the cart.
+	 *
+	 * @param int    $passed Passed.
+	 * @param int    $product_id Product ID.
+	 * @param int    $quantity Quantity.
+	 * @param string $variation_id Variation ID.
+	 * @param string $variations Variations.
+	 * @return string
+	 */
+	public function add_to_cart_validation( $passed, $product_id, $quantity, $variation_id = '', $variations = '' ) {
+
+		$product_min = $this->get_product_min_limit( $product_id );
+
+		if ( ! empty( $product_min ) ) {
+			// min is empty
+			if ( false !== $product_min ) {
+				$new_min = $product_min;
+			} else {
+				// neither max is set, so get out
+				return $passed;
+			}
+		}
+
+		return $passed;
+	}
+
+	/**
+	 * Get Product Minimum Limit.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return int
+	 */
+	public function get_product_min_limit( $product_id ) {
+		$qty = get_post_meta( $product_id, '_wc_min_qty_product', true );
+
+		if ( empty( $qty ) ) {
+			$limit = false;
+		} else {
+			$limit = (int) $qty;
+		}
+
+		return $limit;
 	}
 }

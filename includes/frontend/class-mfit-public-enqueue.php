@@ -152,11 +152,22 @@ class Mfit_Public_Enqueue extends Mfit_Enqueue {
 		);
 
 		// Swiper CSS.
-		$styles[] = array(
-			'handle'    => 'swiper',
-			'asset_uri' => $this->base->get_css_uri() . 'swiper.min.css',
-			'version'   => '6.4.11',
-		);
+		if ( is_front_page() || is_product() ) {
+			$styles[] = array(
+				'handle'    => 'swiper',
+				'asset_uri' => $this->base->get_css_uri() . 'swiper.min.css',
+				'version'   => '6.4.11',
+			);
+		}
+
+		// iziModal CSS.
+		if ( is_product() ) {
+			$styles[] = array(
+				'handle'    => 'izimodal',
+				'asset_uri' => $this->base->get_css_uri() . 'iziModal.min.css',
+				'version'   => '1.6.0',
+			);
+		}
 
 		// Main Stylesheet.
 		$styles[] = array(
@@ -228,12 +239,24 @@ class Mfit_Public_Enqueue extends Mfit_Enqueue {
 		);
 
 		// Swiper JS.
-		$scripts[] = array(
-			'handle'     => 'swiper',
-			'asset_uri'  => $this->base->get_js_uri() . 'swiper.min.js',
-			'dependency' => array( 'jquery' ),
-			'version'    => '6.4.11',
-		);
+		if ( is_front_page() || is_product() ) {
+			$scripts[] = array(
+				'handle'     => 'swiper',
+				'asset_uri'  => $this->base->get_js_uri() . 'swiper.min.js',
+				'dependency' => array( 'jquery' ),
+				'version'    => '6.4.11',
+			);
+		}
+
+		// IziModal JS.
+		if ( is_product() ) {
+			$scripts[] = array(
+				'handle'     => 'izimodal',
+				'asset_uri'  => $this->base->get_js_uri() . 'iziModal.min.js',
+				'dependency' => array( 'jquery' ),
+				'version'    => '1.6.0',
+			);
+		}
 
 		if ( Mfit_Helpers::inside_shop() || Mfit_Helpers::inside_product_cat() || Mfit_Helpers::inside_top_product_cat() || Mfit_Helpers::inside_product_attribute() ) {
 			// Sticky Sidebar JS.

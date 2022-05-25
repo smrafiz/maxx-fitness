@@ -612,6 +612,7 @@ class Mfit_Breadcrumbs {
 		$post_type_object = get_post_type_object( $post_type );
 		$shop_page_markup = '';
 		$link             = '';
+		$has_trail        = false;
 
 		// Check if we are on a woocommerce page.
 		if ( is_object( $post_type_object ) && class_exists( 'WooCommerce' ) && ( Mfit_Helpers::inside_woocommerce() || is_cart() || is_checkout() || is_account_page() ) ) {

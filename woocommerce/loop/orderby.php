@@ -18,8 +18,13 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 ?>
+<div class="mfit-shop-dropdown">
+	<?php
+	echo do_shortcode( '[br_filter_single filter_id=393]' );
+	?>
+</div>
+
 <form class="woocommerce-ordering" method="get">
 	<select name="orderby" class="orderby" aria-label="<?php esc_attr_e( 'Shop order', 'metro' ); ?>">
 		<?php foreach ( $catalog_orderby_options as $id => $name ) : ?>

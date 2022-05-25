@@ -48,7 +48,30 @@ $footer_bg      = get_theme_mod( 'mfit_footer_bg', false );
 		</footer><!-- #colophon -->
 	</div><!-- #page -->
 
-	<?php wp_footer(); ?>
+	<!-- Modal structure -->
+	<div id="mfit-modal"> <div class="modal-content"> </div> </div>
 
+	<!-- Mobile Bottom Bar -->
+	<div class="mobile-bar d-block d-lg-none">
+		<?php
+		get_template_part( 'views/footer/mobile', 'bar' );
+		?>
+	</div>
+
+	<!-- Search modal -->
+	<div id="mobile-search">
+		<?php
+		/**
+		 * Site Search.
+		 */
+		get_template_part( 'views/header/site', 'search' );
+		?>
+		<div class="close-btn">
+			<i class="fa fa-times"></i>
+		</div>
+	</div>
+	<div class="mobile-search-overlay"></div>
+
+	<?php wp_footer(); ?>
 </body>
 </html>

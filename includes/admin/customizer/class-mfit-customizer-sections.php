@@ -215,12 +215,12 @@ class Mfit_Customizer_Sections {
 			'priority'    => 10,
 		);
 
-		$this->sections['mfit_single_settings'] = array(
-			'title'       => esc_html__( 'Single Post', 'maxx-fitness' ),
-			'description' => esc_html__( 'Single post settings', 'maxx-fitness' ),
-			'panel'       => 'mfit_blog_settings',
-			'priority'    => 15,
-		);
+		// $this->sections['mfit_single_settings'] = array(
+		// 	'title'       => esc_html__( 'Single Post', 'maxx-fitness' ),
+		// 	'description' => esc_html__( 'Single post settings', 'maxx-fitness' ),
+		// 	'panel'       => 'mfit_blog_settings',
+		// 	'priority'    => 15,
+		// );
 
 		$this->sections['mfit_social_media'] = array(
 			'title'       => esc_html__( 'Social Media', 'maxx-fitness' ),

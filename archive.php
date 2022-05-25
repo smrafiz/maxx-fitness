@@ -19,20 +19,22 @@ get_header();
 <div id="content" class="content-area">
 	<div class="container">
 		<div class="row">
-			<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-9">
+			<div class="col-12 col-sm-12 col-md-12 col-lg-8 offset-lg-2">
 				<main id="primary" class="site-main">
 					<div id="posts-container" class="row">
-						<?php
-						if ( have_posts() ) {
+						<div class="col-12 col-lg-12">
+							<?php
+							if ( have_posts() ) {
 
-							// The Loop template partial.
-							get_template_part( 'loop' );
-						} else {
+								// The Loop template partial.
+								get_template_part( 'loop' );
+							} else {
 
-							// Template partial for no content.
-							get_template_part( 'views/content/content', 'none' );
-						}
-						?>
+								// Template partial for no content.
+								get_template_part( 'views/content/content', 'none' );
+							}
+							?>
+						</div>
 					</div>
 
 					<div class="nav-container">
@@ -46,14 +48,6 @@ get_header();
 						?>
 					</div>
 				</main><!-- #primary -->
-			</div>
-
-			<div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-3">
-				<aside id="secondary" class="widget-area">
-					<?php
-					get_sidebar();
-					?>
-				</aside><!-- #secondary -->
 			</div>
 		</div>
 	</div>

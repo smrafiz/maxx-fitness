@@ -196,3 +196,55 @@ if ( ! function_exists( 'mfit_pageloader' ) ) {
 		<?php
 	}
 }
+
+add_action( 'init', 'mfit_rename_post_object' );
+if ( ! function_exists( 'mfit_rename_post_object' ) ) {
+	/**
+	 * Renaming post object.
+	 *
+	 * @return void
+	 *
+	 * @since 1.0.0
+	 */
+	function mfit_rename_post_object() {
+		global $wp_post_types;
+
+		$labels                     = $wp_post_types['post']->labels;
+		$labels->name               = __( 'Magazines', 'maxx-fitness' );
+		$labels->singular_name      = __( 'Magazine', 'maxx-fitness' );
+		$labels->add_new            = __( 'Add New', 'maxx-fitness' );
+		$labels->add_new_item       = __( 'Add New', 'maxx-fitness' );
+		$labels->edit_item          = __( 'Edit Magazine', 'maxx-fitness' );
+		$labels->new_item           = __( 'Magazine', 'maxx-fitness' );
+		$labels->view_item          = __( 'View Magazine', 'maxx-fitness' );
+		$labels->search_items       = __( 'Search Magazines', 'maxx-fitness' );
+		$labels->not_found          = __( 'No Magazines found', 'maxx-fitness' );
+		$labels->not_found_in_trash = __( 'No Magazines found in Trash', 'maxx-fitness' );
+		$labels->all_items          = __( 'All Magazines', 'maxx-fitness' );
+		$labels->menu_name          = __( 'Magazines', 'maxx-fitness' );
+		$labels->name_admin_bar     = __( 'Magazines', 'maxx-fitness' );
+	}
+}
+
+add_filter( 'admin_post_thumbnail_html', 'mfit_featured_image_html' );
+if ( ! function_exists( 'mfit_featured_image_html' ) ) {
+	/**
+	 * Custom notice for featured image.
+	 *
+	 * @param string $html Featured image HTML.
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	function mfit_featured_image_html( $html ) {
+		if ( 'post' === get_post_type() ) {
+			$html .= '<p><b><u>Note:</u></b> Upload Fitness Magazine Image as Featured Image here. Recommended image size is <b>800x533</b> px or greater (maintaining same aspect ratio).</p>';
+		}
+
+		if ( 'product' === get_post_type() ) {
+			$html .= '<p><b><u>Note:</u></b> Recommended image size for product is <b>1000x1000</b> px or greater (maintaining same aspect ratio).</p>';
+		}
+
+		return $html;
+	}
+}

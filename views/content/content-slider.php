@@ -19,9 +19,8 @@ $slides = get_theme_mod( 'mfit_home_top_slider', false );
 		<?php
 		foreach ( $slides as $slide ) {
 			$img_id    = $slide['slide_image'];
-			$p_title   = $slide['promo_title'];
-			$title     = $slide['title'];
-			$subtitle  = $slide['subtitle'];
+			$title     = ! empty( $slide['title'] ) ? $slide['title'] : '';
+			$subtitle  = ! empty( $slide['subtitle'] ) ? $slide['subtitle'] : '';
 			$start_tag = ! empty( $slide['link'] ) ? 'a href="' . esc_url( $slide['link'] ) . '"' : 'div';
 			$end_tag   = ! empty( $slide['link'] ) ? 'a' : 'div';
 

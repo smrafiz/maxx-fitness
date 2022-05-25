@@ -16,9 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+$i = 0;
+
 /* Start the Loop */
 while ( have_posts() ) {
 	the_post();
+
+	$i++;
+	$class = 0 === $i % 2 ? 'even' : 'odd';
 
 	if ( is_search() ) {
 
@@ -32,6 +37,8 @@ while ( have_posts() ) {
 		 * called views/content/content-___.php (where ___ is the Post Format name)
 		 * and that will be used instead.
 		 */
+		echo '<div class="fitness-post ' . $class . '"';
 		get_template_part( 'views/content/content', get_post_format() );
+		echo '</div>';
 	}
 }

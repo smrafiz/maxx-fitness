@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								?>
 							</div>
 
-							<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-7">
+							<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-7 d-none d-lg-block">
 								<?php
 								/**
 								 * Site Search.

@@ -89,13 +89,13 @@ class Mfit_Widgets {
 			)
 		);
 
-		self::register_widget_area(
-			array(
-				'name'        => esc_html__( 'Sidebar (Blog)', 'maxx-fitness' ),
-				'id'          => esc_attr( 'mfit-sidebar-blog' ),
-				'description' => esc_html__( 'This sidebar will show in Blog (Posts) page.', 'maxx-fitness' ),
-			)
-		);
+		// self::register_widget_area(
+		// 	array(
+		// 		'name'        => esc_html__( 'Sidebar (Blog)', 'maxx-fitness' ),
+		// 		'id'          => esc_attr( 'mfit-sidebar-blog' ),
+		// 		'description' => esc_html__( 'This sidebar will show in Blog (Posts) page.', 'maxx-fitness' ),
+		// 	)
+		// );
 
 		if ( Mfit_Helpers::has_woocommerce() ) {
 			self::register_widget_area(

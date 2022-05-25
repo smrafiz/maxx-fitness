@@ -16,26 +16,19 @@ get_header(); ?>
 <div id="content" class="content-area">
 	<div class="container">
 		<div class="row">
-			<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-9">
+			<div class="col-12 col-sm-12 col-md-12 col-lg-8 offset-lg-2">
 				<main id="primary" class="site-main">
 					<div id="post-container">
 						<?php
 						while ( have_posts() ) {
 							the_post();
 							echo '<div class="row">';
+							echo '<div class="col-12 col-lg-12">';
 
 							// The content template partial.
 							get_template_part( 'views/content/content', get_post_format() );
 							echo '</div>';
-
-							if ( true === get_theme_mod( 'mfit_single_pagination', false ) ) {
-								echo '<div class="row pagination-container d-none d-md-flex">';
-									echo '<div class="col-12">';
-										// Post Pagination.
-										mfit_post_pagination();
-									echo '</div>';
-								echo '</div>';
-							}
+							echo '</div>';
 
 							// If comments are open or we have at least one comment, load up the comment template.
 							if ( comments_open() || get_comments_number() ) {
@@ -49,13 +42,6 @@ get_header(); ?>
 						?>
 					</div>
 				</main><!-- #primary -->
-			</div>
-			<div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-3">
-				<aside id="secondary" class="widget-area">
-					<?php
-					get_sidebar();
-					?>
-				</aside><!-- #secondary -->
 			</div>
 		</div>
 	</div>
